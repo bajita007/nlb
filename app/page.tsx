@@ -348,7 +348,8 @@ export default function HomePage() {
               <img
                 src="/fitri.jpg"
                 alt="Logo Universitas Hasanuddin"
-                className="w-50 h-50 mx-auto rounded-full border-4 border-blue-100 shadow-md"
+                className="mx-auto rounded-full border-4 border-blue-100 shadow-md"
+                 style="width: 200px; height: 200px; object-fit: cover; object-position: top;"
               />
             </div>
 
