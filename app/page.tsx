@@ -346,9 +346,9 @@ export default function HomePage() {
           <CardContent className="space-y-4 p-6 bg-white">
             <div className="text-center mb-4">
               <img
-                src="/placeholder.svg?height=120&width=120"
+                src="/fitri.jpg"
                 alt="Logo Universitas Hasanuddin"
-                className="w-20 h-20 mx-auto rounded-full border-4 border-blue-100 shadow-md"
+                className="w-50 h-50 mx-auto rounded-full border-4 border-blue-100 shadow-md"
               />
             </div>
 
