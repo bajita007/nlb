@@ -182,7 +182,7 @@ export default function NotifikasiPage() {
         if (serviceWorkerRegistration) {
           const vapidPublicKey =
             process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
-            "BNz4qosiMH124WlsKX8BCDFj2ObyBZg2XM2r3UENpUFdHHPL-DuT3ZOtWknQXatwRK5BM3bCcloDq_FkdguQzMo"
+            "BJ9uAHyuzHrg02TxnQOfWVJAoUzjov_jyWB4LLnx8f-doB_RlvyBTESgA6QldcBQc_X_D54i5mWclYU1S1YGbKM"
           pushSubscription = await subscribeToPushNotifications(serviceWorkerRegistration, vapidPublicKey)
         }
 
@@ -402,14 +402,14 @@ export default function NotifikasiPage() {
                       <p className="text-xs text-gray-500">Terakhir digunakan: {formatDate(device.last_used_at)}</p>
                     </div>
                   </div>
-                  <Button
+                  {/* <Button
                     size="sm"
                     variant="outline"
                     onClick={() => handleRemoveDevice(device.id)}
                     className="text-red-600 hover:text-red-700"
                   >
                     <Trash2 className="h-3 w-3" />
-                  </Button>
+                  </Button> */}
                 </div>
               ))}
             </CardContent>
