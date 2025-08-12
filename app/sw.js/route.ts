@@ -31,7 +31,7 @@ self.addEventListener("push", (event) => {
   }
   const title = data.title  || "Lentera Bunda";
   const options = {
-    body: event.body || "Notifikasi baru dari Lentera Bunda",
+    body: data.body || "Notifikasi baru dari Lentera Bunda",
     icon: "/icon-192x192.png",
     badge: "/icon-192x192.png",
     vibrate: [100, 50, 100],
