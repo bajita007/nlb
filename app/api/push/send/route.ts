@@ -117,8 +117,8 @@ import webpush from "web-push"
 
 // Configure VAPID keys for web push
 const vapidKeys = {
-  publicKey: process.env.VAPID_PUBLIC_KEY || "BEl62iUYgUivxIkv69yViEuiBIa40HI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqI",
-  privateKey: process.env.VAPID_PRIVATE_KEY || "your-private-vapid-key-here",
+  publicKey: process.env.VAPID_PUBLIC_KEY || "BNz4qosiMH124WlsKX8BCDFj2ObyBZg2XM2r3UENpUFdHHPL-DuT3ZOtWknQXatwRK5BM3bCcloDq_FkdguQzMo",
+  privateKey: process.env.VAPID_PRIVATE_KEY || "kkkpZkiAZoC1axi-YOloVaI7KHToSa3q3M3Pd3e3bXI",
 }
 
 webpush.setVapidDetails("mailto:admin@lentera-bunda.com", vapidKeys.publicKey, vapidKeys.privateKey)
