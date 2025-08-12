@@ -182,7 +182,7 @@ export default function NotifikasiPage() {
         if (serviceWorkerRegistration) {
           const vapidPublicKey =
             process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
-            "BEl62iUYgUivxIkv69yViEuiBIa40HI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqI"
+            "BNz4qosiMH124WlsKX8BCDFj2ObyBZg2XM2r3UENpUFdHHPL-DuT3ZOtWknQXatwRK5BM3bCcloDq_FkdguQzMo"
           pushSubscription = await subscribeToPushNotifications(serviceWorkerRegistration, vapidPublicKey)
         }
 
