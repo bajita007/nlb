@@ -56,7 +56,7 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close()
 
   if (event.action === "explore") {
-    event.waitUntil(clients.openWindow("/user/dashboard"))
+    event.waitUntil(clients.openWindow("/user/notifikasi"))
   } else if (event.action === "close") {
     event.notification.close()
   } else {

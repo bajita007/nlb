@@ -43,8 +43,8 @@ export default function ProfilePage() {
       if (userSession) {
         const profileData = {
           id: userSession.id,
-          name: userSession.name,
-          phone: userSession.phone,
+          name: userSession.full_name || "",
+          phone: userSession.phone_number || "",
           email: userSession.email || "",
           created_at: userSession.created_at || new Date().toISOString(),
         }

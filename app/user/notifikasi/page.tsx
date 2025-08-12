@@ -324,7 +324,7 @@ export default function NotifikasiPage() {
 
   return (
     <UserLayout>
-      <div className="max-w-md mx-auto p-4 space-y-6">
+      <div className="max-w-xl mx-auto p-4 space-y-6">
         {/* Header */}
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Notifikasi Multi-Device</h1>
@@ -348,7 +348,7 @@ export default function NotifikasiPage() {
                 <div>
                   <p className="font-medium text-blue-900">Notifikasi Push</p>
                   <p className="text-sm text-blue-700">Terima notifikasi di semua perangkat Anda</p>
-                  {serviceWorkerRegistration && <p className="text-xs text-green-600 mt-1">✓ Service Worker aktif</p>}
+                  {/* {serviceWorkerRegistration && <p className="text-xs text-green-600 mt-1">✓ Service Worker aktif</p>} */}
                 </div>
               </div>
               <Switch checked={pushEnabled} onCheckedChange={() => !pushEnabled && handleEnablePushNotifications()} />
@@ -362,7 +362,7 @@ export default function NotifikasiPage() {
                   className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
                 >
                   <Bell className="h-4 w-4 mr-2" />
-                  {isEnablingPush ? "Mengaktifkan..." : "Aktifkan Notifikasi HP"}
+                  {isEnablingPush ? "Mengaktifkan..." : "Aktifkan Notifikasi"}
                 </Button>
                 <p className="text-xs text-gray-500 mt-2">
                   Klik untuk mengaktifkan notifikasi push di perangkat ini. Browser akan meminta izin notifikasi.

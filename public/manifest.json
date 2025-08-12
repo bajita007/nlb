@@ -1,11 +1,11 @@
 {
-  "name": "Kesehatan Ibu - Kuesioner Kesehatan Mental",
-  "short_name": "Kesehatan Ibu",
+  "name": "Lentera Bunda",
+  "short_name": "Lentera Bunda",
   "description": "Aplikasi untuk mendeteksi tingkat kecemasan dan depresi pada ibu hamil trimester 3",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ec4899",
+  "theme_color": "##9f4a5f",
   "orientation": "portrait",
   "icons": [
     {
