@@ -89,7 +89,6 @@ export default function NotifikasiPage() {
           title: "Error",
           description: "Silakan login terlebih dahulu",
           variant: "destructive",
-          id: ""
         })
         return
       }
@@ -102,7 +101,6 @@ export default function NotifikasiPage() {
           title: "Error",
           description: "Gagal memuat notifikasi",
           variant: "destructive",
-          id: ""
         })
       }
     } catch (error) {
@@ -110,7 +108,6 @@ export default function NotifikasiPage() {
         title: "Error",
         description: "Terjadi kesalahan saat memuat notifikasi",
         variant: "destructive",
-        id: ""
       })
     } finally {
       setIsLoading(false)
@@ -147,14 +144,12 @@ export default function NotifikasiPage() {
         toast({
           title: "Berhasil",
           description: "Notifikasi ditandai sebagai sudah dibaca",
-          id: ""
         })
       } else {
         toast({
           title: "Error",
           description: "Gagal menandai notifikasi",
           variant: "destructive",
-          id: ""
         })
       }
     } catch (error) {
@@ -162,7 +157,6 @@ export default function NotifikasiPage() {
         title: "Error",
         description: "Terjadi kesalahan",
         variant: "destructive",
-        id: ""
       })
     }
   }
@@ -173,7 +167,6 @@ export default function NotifikasiPage() {
         title: "Tidak Didukung",
         description: "Browser Anda tidak mendukung notifikasi push",
         variant: "destructive",
-        id: ""
       })
       return
     }
@@ -187,7 +180,9 @@ export default function NotifikasiPage() {
 
         let pushSubscription = null
         if (serviceWorkerRegistration) {
-          const vapidPublicKey = "BEl62iUYgUivxIkv69yViEuiBIa40HI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqI"
+          const vapidPublicKey =
+            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
+            "BEl62iUYgUivxIkv69yViEuiBIa40HI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqI"
           pushSubscription = await subscribeToPushNotifications(serviceWorkerRegistration, vapidPublicKey)
         }
 
@@ -210,7 +205,6 @@ export default function NotifikasiPage() {
             toast({
               title: "Berhasil",
               description: "Notifikasi push telah diaktifkan untuk perangkat ini",
-              id: ""
             })
 
             if (serviceWorkerRegistration) {
@@ -235,14 +229,12 @@ export default function NotifikasiPage() {
           title: "Ditolak",
           description: "Izin notifikasi ditolak. Anda dapat mengaktifkannya di pengaturan browser.",
           variant: "destructive",
-          id: ""
         })
       } else {
         toast({
           title: "Belum Diizinkan",
           description: "Silakan berikan izin notifikasi untuk mengaktifkan fitur ini.",
           variant: "destructive",
-          id: ""
         })
       }
     } catch (error) {
@@ -251,7 +243,6 @@ export default function NotifikasiPage() {
         title: "Error",
         description: "Gagal mengaktifkan notifikasi push",
         variant: "destructive",
-        id: ""
       })
     } finally {
       setIsEnablingPush(false)
@@ -266,14 +257,12 @@ export default function NotifikasiPage() {
         toast({
           title: "Berhasil",
           description: "Perangkat telah dihapus dari daftar notifikasi",
-          id: ""
         })
       } else {
         toast({
           title: "Error",
           description: "Gagal menghapus perangkat",
           variant: "destructive",
-          id: ""
         })
       }
     } catch (error) {
@@ -281,7 +270,6 @@ export default function NotifikasiPage() {
         title: "Error",
         description: "Terjadi kesalahan",
         variant: "destructive",
-        id: ""
       })
     }
   }
