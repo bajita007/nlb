@@ -4,8 +4,8 @@
   "description": "Aplikasi untuk mendeteksi tingkat kecemasan dan depresi pada ibu hamil trimester 3",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "##9f4a5f",
+  "background_color": "#9f4a5f",
+  "theme_color": "#9f4a5f",
   "orientation": "portrait",
   "icons": [
     {
