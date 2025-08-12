@@ -33,7 +33,7 @@ self.addEventListener("push", (event) => {
   const options = {
     body: data.body || "Notifikasi baru dari Lentera Bunda",
     icon: "/icon-192x192.png",
-    badge: "/icon-192x192.png",
+    badge: "/badge-48.png",
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
