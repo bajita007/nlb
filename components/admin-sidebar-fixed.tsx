@@ -57,12 +57,12 @@ const menuItems = [
   //   icon: MessageSquare,
   //   description: "Kelola pertanyaan",
   // },
-  // {
-  //   title: "Device & Users",
-  //   href: "/admin/devices",
-  //   icon: Smartphone,
-  //   description: "Daftar perangkat",
-  // },
+  {
+     title: "Data Post Test",
+     href: "/admin/data-posttest",
+     icon: Smartphone,
+    description: "Daftar perangkat",
+   },
   {
     title: "Manajemen Pengguna",
     href: "/admin/users",
