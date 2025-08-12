@@ -60,7 +60,7 @@ export default function MediaEdukasiIntroPage() {
 
   return (
     <UserLayout>
-      <div className="max-w-sm mx-auto md:max-w-4xl lg:max-w-6xl p-4 space-y-6">
+      <div className="mx-auto md:max-w-4xl lg:max-w-6xl p-4 space-y-6">
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-4">

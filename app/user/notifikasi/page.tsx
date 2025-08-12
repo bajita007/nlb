@@ -324,7 +324,7 @@ export default function NotifikasiPage() {
 
   return (
     <UserLayout>
-      <div className="max-w-xl mx-auto p-4 space-y-6">
+      <div className="mx-auto p-4 space-y-6">
         {/* Header */}
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Notifikasi Multi-Device</h1>

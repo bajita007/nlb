@@ -128,7 +128,7 @@ export default function PosttestPage() {
   if (isCompleted) {
     return (
       <UserLayout>
-        <div className="max-w-xl mx-auto p-4">
+        <div className="mx-auto p-4">
           <Card className="text-center">
             <CardHeader>
               <div className="flex justify-center mb-4">

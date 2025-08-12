@@ -21,8 +21,13 @@ self.addEventListener("fetch", (event) => {
 
 // Push event
 self.addEventListener("push", (event) => {
+  let data ={};
+  if(event.data){
+    data = event.data.json();
+  }
+  const title =`${data.title} | Lentera Bunda` || "Lentera Bunda";
   const options = {
-    body: event.data ? event.data.text() : "Notifikasi baru dari Lentera Bunda",
+    body: event.body || "Notifikasi baru dari Lentera Bunda",
     icon: "/icon-192x192.png",
     badge: "/icon-192x192.png",
     vibrate: [100, 50, 100],
@@ -44,7 +49,7 @@ self.addEventListener("push", (event) => {
     ],
   }
 
-  event.waitUntil(self.registration.showNotification("Lentera Bunda", options))
+  event.waitUntil(self.registration.showNotification(, options))
 })
 
 // Notification click event

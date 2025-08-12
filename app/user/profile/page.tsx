@@ -162,7 +162,7 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <UserLayout>
-        <div className="max-w-md mx-auto p-4">
+        <div className="mx-auto p-4">
           <Card>
             <CardContent className="text-center py-8">
               <p className="text-gray-600">Profil tidak ditemukan</p>
