@@ -5,11 +5,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
-import { Bell, BellOff, Check, Clock, Smartphone, Settings, MessageSquare, Calendar } from "lucide-react"
+import {
+  Bell,
+  BellOff,
+  Check,
+  Clock,
+  Smartphone,
+  Settings,
+  MessageSquare,
+  Calendar,
+  Monitor,
+  Trash2,
+} from "lucide-react"
 import { UserLayout } from "@/components/user-layout"
 import { useToast } from "@/components/ui/use-toast"
-import { getUserNotifications, markNotificationAsRead } from "@/app/actions/notification-actions"
+import {
+  getUserNotifications,
+  markNotificationAsRead,
+  registerUserDevice,
+  getUserDevices,
+  deactivateUserDevice,
+} from "@/app/actions/notification-actions"
 import { getUserSession } from "@/lib/auth"
+import {
+  registerServiceWorker,
+  requestNotificationPermission,
+  subscribeToPushNotifications,
+} from "@/lib/push-notifications"
 
 interface UserNotification {
   id: string
@@ -20,19 +42,44 @@ interface UserNotification {
   is_read: boolean
   sent_at: string
   created_at: string
+  devices_sent_to?: number
+  delivery_status?: Record<string, string>
+}
+
+interface UserDevice {
+  id: string
+  user_id: string
+  device_token: string
+  device_type: string
+  device_name: string
+  browser_info: string
+  is_active: boolean
+  last_used_at: string
+  created_at: string
 }
 
 export default function NotifikasiPage() {
   const { toast } = useToast()
   const [notifications, setNotifications] = useState<UserNotification[]>([])
+  const [devices, setDevices] = useState<UserDevice[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [pushEnabled, setPushEnabled] = useState(false)
   const [isEnablingPush, setIsEnablingPush] = useState(false)
+  const [serviceWorkerRegistration, setServiceWorkerRegistration] = useState<ServiceWorkerRegistration | null>(null)
 
   useEffect(() => {
     loadNotifications()
+    loadUserDevices()
     checkPushPermission()
+    initializeServiceWorker()
   }, [])
+
+  const initializeServiceWorker = async () => {
+    const registration = await registerServiceWorker()
+    if (registration) {
+      setServiceWorkerRegistration(registration)
+    }
+  }
 
   const loadNotifications = async () => {
     try {
@@ -42,6 +89,7 @@ export default function NotifikasiPage() {
           title: "Error",
           description: "Silakan login terlebih dahulu",
           variant: "destructive",
+          id: ""
         })
         return
       }
@@ -54,6 +102,7 @@ export default function NotifikasiPage() {
           title: "Error",
           description: "Gagal memuat notifikasi",
           variant: "destructive",
+          id: ""
         })
       }
     } catch (error) {
@@ -61,9 +110,24 @@ export default function NotifikasiPage() {
         title: "Error",
         description: "Terjadi kesalahan saat memuat notifikasi",
         variant: "destructive",
+        id: ""
       })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const loadUserDevices = async () => {
+    try {
+      const userSession = getUserSession()
+      if (!userSession) return
+
+      const result = await getUserDevices(userSession.id)
+      if (result.success && result.data) {
+        setDevices(result.data)
+      }
+    } catch (error) {
+      console.error("Error loading devices:", error)
     }
   }
 
@@ -83,12 +147,14 @@ export default function NotifikasiPage() {
         toast({
           title: "Berhasil",
           description: "Notifikasi ditandai sebagai sudah dibaca",
+          id: ""
         })
       } else {
         toast({
           title: "Error",
           description: "Gagal menandai notifikasi",
           variant: "destructive",
+          id: ""
         })
       }
     } catch (error) {
@@ -96,6 +162,7 @@ export default function NotifikasiPage() {
         title: "Error",
         description: "Terjadi kesalahan",
         variant: "destructive",
+        id: ""
       })
     }
   }
@@ -106,6 +173,7 @@ export default function NotifikasiPage() {
         title: "Tidak Didukung",
         description: "Browser Anda tidak mendukung notifikasi push",
         variant: "destructive",
+        id: ""
       })
       return
     }
@@ -113,34 +181,108 @@ export default function NotifikasiPage() {
     setIsEnablingPush(true)
 
     try {
-      const permission = await Notification.requestPermission()
+      const permission = await requestNotificationPermission()
       if (permission === "granted") {
         setPushEnabled(true)
-        toast({
-          title: "Berhasil",
-          description: "Notifikasi push telah diaktifkan",
-        })
 
-        // Test notification
-        new Notification("Notifikasi Aktif", {
-          body: "Anda akan menerima notifikasi dari aplikasi ini",
-          icon: "/icon-192x192.png",
-        })
-      } else {
+        let pushSubscription = null
+        if (serviceWorkerRegistration) {
+          const vapidPublicKey = "BEl62iUYgUivxIkv69yViEuiBIa40HI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqI"
+          pushSubscription = await subscribeToPushNotifications(serviceWorkerRegistration, vapidPublicKey)
+        }
+
+        const deviceToken = pushSubscription?.endpoint || `web_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        const userSession = getUserSession()
+
+        if (userSession) {
+          const deviceInfo = {
+            userId: userSession.id,
+            deviceToken,
+            deviceType: "web",
+            deviceName: `${navigator.platform} - ${navigator.userAgent.split(" ")[0]}`,
+            browserInfo: navigator.userAgent,
+            pushSubscription: pushSubscription ? JSON.stringify(pushSubscription) : null,
+          }
+
+          const result = await registerUserDevice(deviceInfo)
+          if (result.success) {
+            await loadUserDevices()
+            toast({
+              title: "Berhasil",
+              description: "Notifikasi push telah diaktifkan untuk perangkat ini",
+              id: ""
+            })
+
+            if (serviceWorkerRegistration) {
+              serviceWorkerRegistration.showNotification("Lentera Bunda - Notifikasi Aktif", {
+                body: "Perangkat ini akan menerima notifikasi dari admin aplikasi",
+                icon: "/icon-192x192.png",
+                badge: "/icon-192x192.png",
+                vibrate: [100, 50, 100],
+                tag: "test-notification",
+                requireInteraction: false,
+              })
+            } else {
+              new Notification("Lentera Bunda - Notifikasi Aktif", {
+                body: "Perangkat ini akan menerima notifikasi dari admin aplikasi",
+                icon: "/icon-192x192.png",
+              })
+            }
+          }
+        }
+      } else if (permission === "denied") {
         toast({
           title: "Ditolak",
           description: "Izin notifikasi ditolak. Anda dapat mengaktifkannya di pengaturan browser.",
           variant: "destructive",
+          id: ""
+        })
+      } else {
+        toast({
+          title: "Belum Diizinkan",
+          description: "Silakan berikan izin notifikasi untuk mengaktifkan fitur ini.",
+          variant: "destructive",
+          id: ""
+        })
+      }
+    } catch (error) {
+      console.error("Push notification error:", error)
+      toast({
+        title: "Error",
+        description: "Gagal mengaktifkan notifikasi push",
+        variant: "destructive",
+        id: ""
+      })
+    } finally {
+      setIsEnablingPush(false)
+    }
+  }
+
+  const handleRemoveDevice = async (deviceId: string) => {
+    try {
+      const result = await deactivateUserDevice(deviceId)
+      if (result.success) {
+        setDevices((prev) => prev.filter((device) => device.id !== deviceId))
+        toast({
+          title: "Berhasil",
+          description: "Perangkat telah dihapus dari daftar notifikasi",
+          id: ""
+        })
+      } else {
+        toast({
+          title: "Error",
+          description: "Gagal menghapus perangkat",
+          variant: "destructive",
+          id: ""
         })
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Gagal mengaktifkan notifikasi push",
+        description: "Terjadi kesalahan",
         variant: "destructive",
+        id: ""
       })
-    } finally {
-      setIsEnablingPush(false)
     }
   }
 
@@ -197,7 +339,7 @@ export default function NotifikasiPage() {
       <div className="max-w-md mx-auto p-4 space-y-6">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Notifikasi</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Notifikasi Multi-Device</h1>
           <p className="text-gray-600 text-sm">
             {unreadCount > 0 ? `${unreadCount} notifikasi belum dibaca` : "Semua notifikasi sudah dibaca"}
           </p>
@@ -208,7 +350,7 @@ export default function NotifikasiPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Settings className="h-5 w-5" />
-              Pengaturan Notifikasi
+              Pengaturan Notifikasi Multi-Device
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -217,7 +359,8 @@ export default function NotifikasiPage() {
                 <Smartphone className="h-6 w-6 text-blue-600" />
                 <div>
                   <p className="font-medium text-blue-900">Notifikasi Push</p>
-                  <p className="text-sm text-blue-700">Terima notifikasi langsung di perangkat Anda</p>
+                  <p className="text-sm text-blue-700">Terima notifikasi di semua perangkat Anda</p>
+                  {serviceWorkerRegistration && <p className="text-xs text-green-600 mt-1">✓ Service Worker aktif</p>}
                 </div>
               </div>
               <Switch checked={pushEnabled} onCheckedChange={() => !pushEnabled && handleEnablePushNotifications()} />
@@ -233,7 +376,9 @@ export default function NotifikasiPage() {
                   <Bell className="h-4 w-4 mr-2" />
                   {isEnablingPush ? "Mengaktifkan..." : "Aktifkan Notifikasi HP"}
                 </Button>
-                <p className="text-xs text-gray-500 mt-2">Klik untuk mengaktifkan notifikasi push di perangkat Anda</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  Klik untuk mengaktifkan notifikasi push di perangkat ini. Browser akan meminta izin notifikasi.
+                </p>
               </div>
             )}
 
@@ -241,12 +386,47 @@ export default function NotifikasiPage() {
               <div className="text-center p-3 bg-green-50 rounded-lg border border-green-200">
                 <div className="flex items-center justify-center gap-2 text-green-800">
                   <Check className="h-4 w-4" />
-                  <span className="text-sm font-medium">Notifikasi push aktif</span>
+                  <span className="text-sm font-medium">
+                    Notifikasi push aktif di {devices.length} perangkat
+                    {serviceWorkerRegistration && " (Background sync enabled)"}
+                  </span>
                 </div>
               </div>
             )}
           </CardContent>
         </Card>
+
+        {devices.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Monitor className="h-5 w-5" />
+                Perangkat Terdaftar ({devices.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {devices.map((device) => (
+                <div key={device.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Monitor className="h-4 w-4 text-gray-600" />
+                    <div>
+                      <p className="font-medium text-sm">{device.device_name}</p>
+                      <p className="text-xs text-gray-500">Terakhir digunakan: {formatDate(device.last_used_at)}</p>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleRemoveDevice(device.id)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Notifications List */}
         <Card>
@@ -278,7 +458,14 @@ export default function NotifikasiPage() {
                           <h3 className={`font-medium ${!notification.is_read ? "text-blue-900" : "text-gray-900"}`}>
                             {notification.title}
                           </h3>
-                          {!notification.is_read && <Badge className="bg-blue-100 text-blue-800 text-xs">Baru</Badge>}
+                          <div className="flex gap-1">
+                            {!notification.is_read && <Badge className="bg-blue-100 text-blue-800 text-xs">Baru</Badge>}
+                            {notification.devices_sent_to && notification.devices_sent_to > 0 && (
+                              <Badge variant="outline" className="text-xs">
+                                {notification.devices_sent_to} device
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                         <p className="text-sm text-gray-700 mb-3 leading-relaxed">{notification.message}</p>
                         <div className="flex items-center justify-between">
@@ -311,7 +498,7 @@ export default function NotifikasiPage() {
         {notifications.length > 0 && (
           <Card>
             <CardContent className="p-6">
-              <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
                   <p className="text-2xl font-bold text-blue-600">{notifications.length}</p>
                   <p className="text-sm text-gray-600">Total Notifikasi</p>
@@ -319,6 +506,10 @@ export default function NotifikasiPage() {
                 <div>
                   <p className="text-2xl font-bold text-green-600">{notifications.length - unreadCount}</p>
                   <p className="text-sm text-gray-600">Sudah Dibaca</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-purple-600">{devices.length}</p>
+                  <p className="text-sm text-gray-600">Perangkat Aktif</p>
                 </div>
               </div>
             </CardContent>
