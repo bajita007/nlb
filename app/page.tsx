@@ -345,12 +345,17 @@ export default function HomePage() {
           </CardHeader>
           <CardContent className="space-y-4 p-6 bg-white">
             <div className="text-center mb-4">
-              <img
-                src="/fitri.jpg"
-                alt="Logo Universitas Hasanuddin"
-                className="mx-auto rounded-full border-4 border-blue-100 shadow-md"
-                 style="width: 200px; height: 200px; object-fit: cover; object-position: top;"
-              />
+            <img
+  src="/fitri.jpg"
+  alt="Logo Universitas Hasanuddin"
+  className="mx-auto rounded-full border-4 border-blue-100 shadow-md"
+  style={{
+    width: '200px',
+    height: '200px',
+    objectFit: 'cover',
+    objectPosition: 'top'
+  }}
+/>
             </div>
 
             <p className="font-medium text-gray-800 text-center">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
