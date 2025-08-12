@@ -710,7 +710,7 @@ export default function NotificationsPage() {
                               <div className="flex items-center gap-2">
                                 <User className="h-4 w-4" />
                                 <span>{user.full_name}</span>
-                                <span className="text-sm text-gray-500">({user.email})</span>
+                                {/* <span className="text-sm text-gray-500">({user.email})</span> */}
                                 {userDevices.length > 0 && (
                                   <Badge variant="outline" className="text-xs">
                                     <Smartphone className="h-3 w-3 mr-1" />

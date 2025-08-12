@@ -53,11 +53,9 @@ self.addEventListener("push", (event) => {
     ],
   }
 
-  event.waitUntil(self.registration.showNotification(, options))
+  event.waitUntil(self.registration.showNotification(title, options))
 })
 
-  event.waitUntil(self.registration.showNotification("Lentera Bunda", options))
-})
 
 // Notification click event
 self.addEventListener("notificationclick", (event) => {

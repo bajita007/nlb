@@ -175,7 +175,7 @@ export default function ProfilePage() {
 
   return (
     <UserLayout>
-      <div className="max-w-md mx-auto p-4 space-y-6">
+      <div className=" mx-auto p-4 space-y-6">
         {/* Profile Header */}
         <Card>
           <CardHeader className="text-center">
