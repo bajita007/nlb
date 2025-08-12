@@ -187,6 +187,19 @@ export async function getExportData() {
   }
 }
 
+export async function getExportDataPostTest() {
+  try {
+    const supabase = createServerSupabaseClient()
+    const { data, error } = await supabase.from("posttest_results").select("*").order("submitted_at", { ascending: false })
+
+    if (error) throw error
+
+    return { success: true, data }
+  } catch (error) {
+    console.error("Error fetching export data:", error)
+    return { success: false, error: "Failed to fetch export data", data: [] }
+  }
+}
 // NEW: Get dashboard statistics
 export async function getDashboardStats() {
   try {

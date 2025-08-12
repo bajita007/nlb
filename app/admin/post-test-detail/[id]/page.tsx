@@ -20,41 +20,22 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { AdminLayout } from "@/components/admin-layout"
-import { getRespondentById, deleteRespondent } from "@/app/actions/respondent-actions"
+import { getRespondentById, deleteRespondent } from "@/app/actions/posttest-actions"
 import { useToast } from "@/components/ui/use-toast"
 
 interface RespondentData {
-  id: string
-  respondent_number: string
-  user_id: string
-  device_id: string
-  nama: string
-  tanggal_lahir: string
-  alamat: string
-  nomor_telepon: string
-  nama_puskesmas: string
-  berat_badan: string
-  tinggi_badan: string
-  lila: string
-  pendidikan: string
-  pekerjaan: string
-  status_pernikahan: string
-  pekerjaan_suami: string
-  pendidikan_suami: string
-  riwayat_antidepresan: string
-  riwayat_keluarga_antidepresan: string
-  dukungan_suami: string
-  dukungan_keluarga: string
-  nama_anggota_keluarga?: string
-  riwayat_masalah_kesehatan?: string
-  masalah_kehamilan: string[]
-  kuesioner: number[]
-  total_depression_score: number // Updated column name
-  depression_category: string // Updated column name
-  total_anxiety_score: number // New column
-  anxiety_category: string // New column
-  submitted_at: string
-  created_at: string
+       id: string,
+     user_id: string,
+      user_name: string,
+      user_phone: string,
+      answers:  number[],
+      total_depression_score: number,
+      depression_category: string,
+      total_anxiety_score: number,
+      anxiety_category: string,
+      submitted_at:string,
+      created_at: string,
+
 }
 
 // Define EPDS questions with their options and scores
@@ -179,7 +160,7 @@ export default function RespondentDetailPage() {
           variant: "destructive",
           id: ""
         })
-        router.push("/admin/respondents")
+        router.push("/admin/data-posttest")
       }
     } catch (error) {
       console.error("Error loading respondent:", error)
@@ -209,7 +190,7 @@ export default function RespondentDetailPage() {
           description: "Data responden berhasil dihapus",
           id: ""
         })
-        router.push("/admin/respondents")
+        router.push("/admin/data-posttest")
       } else {
         toast({
           title: "Gagal",
@@ -303,7 +284,7 @@ export default function RespondentDetailPage() {
       <AdminLayout>
         <div className="text-center py-12">
           <p className="text-gray-500">Data responden tidak ditemukan</p>
-          <Link href="/admin/respondents">
+          <Link href="/admin/data-posttest">
             <Button className="mt-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Kembali ke Daftar
@@ -323,14 +304,13 @@ export default function RespondentDetailPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-4">
-            <Link href="/admin/respondents">
+            <Link href="/admin/data-posttest">
               <Button variant="outline" size="icon" className="hover:bg-blue-50">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Detail Responden</h1>
-              <p className="text-gray-600">ID: {respondent.respondent_number}</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -426,7 +406,7 @@ export default function RespondentDetailPage() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {/* Biodata */}
           <Card className="shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
@@ -439,202 +419,27 @@ export default function RespondentDetailPage() {
               <div className="grid grid-cols-1 gap-4">
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <label className="text-sm font-medium text-gray-600">Nama Lengkap</label>
-                  <p className="font-semibold text-lg text-gray-900">{respondent.nama}</p>
+                  <p className="font-semibold text-lg text-gray-900">{respondent.user_name}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-gray-600">Tanggal Lahir</label>
                     <p className="flex items-center gap-1 font-medium">
                       <Calendar className="h-4 w-4 text-gray-400" />
-                      {new Date(respondent.tanggal_lahir).toLocaleDateString("id-ID")}
+                      {new Date(respondent.user_phone).toLocaleDateString("id-ID")}
                     </p>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Nomor Telepon</label>
-                    <p className="flex items-center gap-1 font-medium">
-                      <Phone className="h-4 w-4 text-gray-400" />
-                      {respondent.nomor_telepon}
-                    </p>
-                  </div>
+                 
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Alamat Lengkap</label>
-                  <p className="flex items-start gap-1 font-medium">
-                    <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                    {respondent.alamat}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-600">Tempat Konsultasi</label>
-                  <p className="flex items-center gap-1 font-medium">
-                    <Building2 className="h-4 w-4 text-gray-400" />
-                    {respondent.nama_puskesmas}
-                  </p>
-                </div>
+                
+                
               </div>
             </CardContent>
           </Card>
 
-          {/* Data Kesehatan */}
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
-              <CardTitle className="flex items-center gap-2 text-green-800">
-                <Heart className="h-5 w-5" />
-                Data Kesehatan
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center bg-green-50 p-3 rounded-lg">
-                  <div className="text-2xl font-bold text-green-700">{respondent.berat_badan}</div>
-                  <p className="text-sm text-green-600 font-medium">Berat Badan (kg)</p>
-                </div>
-                <div className="text-center bg-blue-50 p-3 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-700">{respondent.tinggi_badan}</div>
-                  <p className="text-sm text-blue-600 font-medium">Tinggi Badan (cm)</p>
-                </div>
-                <div className="text-center bg-purple-50 p-3 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-700">{respondent.lila}</div>
-                  <p className="text-sm text-purple-600 font-medium">LILA (cm)</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+       
         </div>
 
-        {/* Data Sosial Ekonomi */}
-        <Card className="shadow-md hover:shadow-lg transition-shadow">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b">
-            <CardTitle className="flex items-center gap-2 text-purple-800">
-              <Users className="h-5 w-5" />
-              Data Sosial Ekonomi & Keluarga
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <h4 className="font-semibold text-gray-900 text-lg border-b pb-2">Data Responden</h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Pendidikan:</span>
-                    <span className="font-medium">{respondent.pendidikan}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Pekerjaan:</span>
-                    <span className="font-medium">{respondent.pekerjaan}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Status Pernikahan:</span>
-                    <span className="font-medium">{respondent.status_pernikahan}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="font-semibold text-gray-900 text-lg border-b pb-2">Data Suami/Pasangan</h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Pendidikan Suami:</span>
-                    <span className="font-medium">{respondent.pendidikan_suami}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Pekerjaan Suami:</span>
-                    <span className="font-medium">{respondent.pekerjaan_suami}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Dukungan Sosial & Riwayat */}
-        <Card className="shadow-md hover:shadow-lg transition-shadow">
-          <CardHeader className="bg-gradient-to-r from-orange-50 to-yellow-50 border-b">
-            <CardTitle className="flex items-center gap-2 text-orange-800">
-              <Heart className="h-5 w-5" />
-              Dukungan Sosial & Riwayat Kesehatan
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <h4 className="font-semibold text-gray-900 text-lg border-b pb-2">Dukungan Sosial</h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Dukungan Suami:</span>
-                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                      {respondent.dukungan_suami}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Dukungan Keluarga:</span>
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                      {respondent.dukungan_keluarga}
-                    </Badge>
-                  </div>
-                  {respondent.nama_anggota_keluarga && (
-                    <div>
-                      <span className="text-gray-600 text-sm">Anggota Keluarga Pendukung:</span>
-                      <p className="font-medium mt-1">{respondent.nama_anggota_keluarga}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="font-semibold text-gray-900 text-lg border-b pb-2">Riwayat Kesehatan</h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Riwayat Antidepresan:</span>
-                    <Badge
-                      variant="outline"
-                      className={
-                        respondent.riwayat_antidepresan === "Tidak Pernah"
-                          ? "bg-green-50 text-green-700 border-green-200"
-                          : "bg-yellow-50 text-yellow-700 border-yellow-200"
-                      }
-                    >
-                      {respondent.riwayat_antidepresan}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Riwayat Keluarga:</span>
-                    <Badge
-                      variant="outline"
-                      className={
-                        respondent.riwayat_keluarga_antidepresan === "Tidak Ada"
-                          ? "bg-green-50 text-green-700 border-green-200"
-                          : "bg-yellow-50 text-yellow-700 border-yellow-200"
-                      }
-                    >
-                      {respondent.riwayat_keluarga_antidepresan}
-                    </Badge>
-                  </div>
-                </div>
-
-                {respondent.riwayat_masalah_kesehatan && (
-                  <div className="mt-4">
-                    <span className="text-gray-600 text-sm">Riwayat Masalah Kesehatan:</span>
-                    <p className="text-sm bg-gray-50 p-3 rounded mt-1">{respondent.riwayat_masalah_kesehatan}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {respondent.masalah_kehamilan && respondent.masalah_kehamilan.length > 0 && (
-              <div className="mt-6 pt-6 border-t">
-                <h4 className="font-semibold text-gray-900 mb-3">Masalah Kehamilan Saat Ini</h4>
-                <div className="flex flex-wrap gap-2">
-                  {respondent.masalah_kehamilan.map((masalah: string, index: number) => (
-                    <Badge key={index} variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-                      {masalah}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
 
         {/* Jawaban Kuesioner EPDS */}
         <Card className="shadow-md hover:shadow-lg transition-shadow">
@@ -647,7 +452,7 @@ export default function RespondentDetailPage() {
           <CardContent className="p-6">
             <div className="space-y-4">
               {epdsQuestions.map((q, index) => {
-                const selectedScore = respondent.kuesioner[index] || 0
+                const selectedScore = respondent.answers[index] || 0
                 const selectedOption = q.options.find((opt) => opt.score === selectedScore)
                 const answerText = selectedOption ? selectedOption.text : "Tidak ada jawaban"
 

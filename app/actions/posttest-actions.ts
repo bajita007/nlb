@@ -1,8 +1,21 @@
 "use server"
 
-import { UserSession } from "@/lib/auth"
 import { createServerClient } from "@/lib/supabase/server"
-// import { getUserSession } from "@/lib/auth"
+import { revalidatePath } from "next/cache"
+interface RespondentData {
+       id: string,
+     user_id: string,
+      user_name: string,
+      user_phone: string,
+      answers:  number[],
+      total_depression_score: number,
+      depression_category: string,
+      total_anxiety_score: number,
+      anxiety_category: string,
+      submitted_at:string,
+      created_at: string,
+
+}
 
 function getDepressionCategory(score: number): string {
   if (score >= 13 && score <= 20) return "Sedang-Berat"
@@ -45,18 +58,7 @@ export async function submitPosttest(answers: number[], userData: any) {
 
     let anxietyCategory = getAnxietyCategory(anxietyScore);
 
-  // const userData = JSON.parse(localStorage.getItem('userData') || '{}')
-// Ambil flag login
 
-
-// if (userLoggedIn && userDataString) {
-
-//   console.log("User ID:", userData.id);
-//   console.log("Nama:", userData.name);
-//   console.log("Phone:", userData.phone);
-// } else {
-//   console.log("User belum login atau data tidak ditemukan");
-// }
     const posttestData = {
       user_id:userData.id,
       user_name: userData.full_name,
@@ -118,5 +120,37 @@ export async function getAllPosttestResults() {
   } catch (error) {
     console.error("Error fetching all posttest results:", error)
     return { success: false, error: "Failed to fetch results", data: [] }
+  }
+}
+
+
+export async function getRespondentById(id: string) {
+  try {
+    const supabase = createServerClient()
+    const { data, error } = await supabase.from("posttest_results").select("*").eq("id", id).single()
+
+    if (error) throw error
+
+    return { success: true, data: data as RespondentData }
+  } catch (error) {
+    console.error("Error fetching respondent by ID:", error)
+    return { success: false, error: "Failed to fetch data", data: null }
+  }
+}
+
+export async function deleteRespondent(id: string) {
+  try {
+    const supabase = createServerClient()
+    const { error } = await supabase.from("respondents").delete().eq("id", id)
+
+    if (error) throw error
+
+    revalidatePath("/admin/data-posttest")
+    revalidatePath("/admin/users")
+    revalidatePath("/user/hasil-posttest")
+    return { success: true }
+  } catch (error) {
+    console.error("Error deleting respondent:", error)
+    return { success: false, error: "Failed to delete data" }
   }
 }

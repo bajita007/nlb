@@ -10,59 +10,27 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, Eye, Download, Filter } from "lucide-react" // Removed Phone, MapPin
 import Link from "next/link"
 import { AdminLayout } from "@/components/admin-layout"
-import { getAllRespondents } from "@/app/actions/respondent-actions"
-import { getExportData } from "@/app/actions/admin-crud-actions"
+import { getAllPosttestResults } from "@/app/actions/posttest-actions"
+import { getExportData, getExportDataPostTest } from "@/app/actions/admin-crud-actions"
 import { useToast } from "@/components/ui/use-toast"
 import * as XLSX from "xlsx"
 
 interface RespondentData {
-  id: string
-  user_id: string
-  respondent_number: string
-  nama: string
-  tanggal_lahir: string
-  nomor_telepon: string
-  nama_puskesmas: string
-  alamat: string
-  total_depression_score: number // Updated column name
-  depression_category: string // Updated column name
-  total_anxiety_score: number // New column
-  anxiety_category: string // New column
-  submitted_at: string
-  device_id: string
-  // Add other fields that might be in your database for a complete export
-  berat_badan?: number
-  tinggi_badan?: number
-  lila?: number
-  pendidikan?: string
-  pekerjaan?: string
-  status_pernikahan?: string
-  pekerjaan_suami?: string
-  pendidikan_suami?: string
-  riwayat_antidepresan?: boolean
-  riwayat_keluarga_antidepresan?: boolean
-  dukungan_suami?: string
-  dukungan_keluarga?: string
-  nama_anggota_keluarga?: string
-  riwayat_masalah_kesehatan?: string
-  masalah_kehamilan?: string
-  kuesioner?: number[]
+       id: string,
+     user_id: string,
+      user_name?: string,
+      user_phone?: string,
+      answers?:  number[],
+      total_depression_score: number,
+      depression_category: string,
+      total_anxiety_score: number,
+      anxiety_category: string,
+      submitted_at:string,
+      created_at: string,
+
 }
 
-const healthUnits = [
-  "Semua Unit",
-  "Puskesmas Bangkala",
-  "Puskesmas Batang",
-  "Puskesmas Binamu",
-  "Puskesmas Bontoramba",
-  "Puskesmas Kelara",
-  "Puskesmas Rumbia",
-  "Puskesmas Tamalatea",
-  "Puskesmas Turatea",
-  "RSUD Jeneponto",
-  "RS Bersalin Siti Khadijah",
-  "Klinik Pratama Lainnya",
-]
+
 
 export default function RespondentsPage() {
   const { toast } = useToast()
@@ -83,7 +51,7 @@ export default function RespondentsPage() {
   const loadData = async () => {
     try {
       setIsLoading(true)
-      const result = await getAllRespondents()
+      const result = await getAllPosttestResults()
 
       if (result.success) {
         setData(result.data || [])
@@ -115,16 +83,10 @@ export default function RespondentsPage() {
     if (searchTerm) {
       filtered = filtered.filter(
         (item) =>
-          item.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.nomor_telepon.includes(searchTerm) ||
-          item.respondent_number.toLowerCase().includes(searchTerm.toLowerCase()),
+          item.user_name.toLowerCase().includes(searchTerm.toLowerCase()) 
       )
     }
 
-    // Filter by health unit
-    if (selectedUnit !== "Semua Unit") {
-      filtered = filtered.filter((item) => item.nama_puskesmas === selectedUnit)
-    }
 
     setFilteredData(filtered)
   }
@@ -159,32 +121,14 @@ export default function RespondentsPage() {
 
   const exportToExcel = async () => {
     try {
-      const result = await getExportData() // Use the getExportData action from admin-crud-actions
+      const result = await getExportDataPostTest() // Use the getExportData action from admin-crud-actions
 
       if (result.success && result.data && result.data.length > 0) {
         // Prepare data for export, ensuring all relevant fields are included
         const dataToExport = result.data.map((row) => ({
           "ID Responden": row.respondent_number,
-          "Nama Lengkap": row.nama,
-          "Tanggal Lahir": new Date(row.tanggal_lahir).toLocaleDateString("id-ID"),
-          "Alamat": row.alamat,
-          "Nomor Telepon": row.nomor_telepon,
-          "Nama Puskesmas": row.nama_puskesmas,
-          "Berat Badan": row.berat_badan,
-          "Tinggi Badan": row.tinggi_badan,
-          "LILA": row.lila,
-          "Pendidikan": row.pendidikan,
-          "Pekerjaan": row.pekerjaan,
-          "Status Pernikahan": row.status_pernikahan,
-          "Pekerjaan Suami": row.pekerjaan_suami,
-          "Pendidikan Suami": row.pendidikan_suami,
-          "Riwayat Antidepresan": row.riwayat_antidepresan ? "Ya" : "Tidak",
-          "Riwayat Keluarga Antidepresan": row.riwayat_keluarga_antidepresan ? "Ya" : "Tidak",
-          "Dukungan Suami": row.dukungan_suami,
-          "Dukungan Keluarga": row.dukungan_keluarga,
-          "Nama Anggota Keluarga": row.nama_anggota_keluarga,
-          "Riwayat Masalah Kesehatan": row.riwayat_masalah_kesehatan,
-          "Masalah Kehamilan": row.masalah_kehamilan,
+          "Nama Lengkap": row.user_name,
+          "Nomor Telepon": row.user_phone,
           "Skor Depresi (EPDS)": row.total_depression_score, // Updated column name
           "Kategori Depresi": row.depression_category, // Updated column name
           "Skor Kecemasan (Q3-5)": row.total_anxiety_score, // New column
@@ -194,14 +138,13 @@ export default function RespondentsPage() {
             " " +
             new Date(row.submitted_at).toLocaleTimeString("id-ID"),
           "ID Pengguna (Internal)": row.user_id,
-          "ID Perangkat": row.device_id,
           // Add individual questionnaire scores if needed, e.g., "Kuesioner 1": row.kuesioner?.[0]
-          ...Object.fromEntries((row.kuesioner || []).map((score, index) => [`Kuesioner ${index + 1}`, score])),
+          ...Object.fromEntries((row.answers || []).map((score, index) => [`Kuesioner ${index + 1}`, score])),
         }))
 
         const ws = XLSX.utils.json_to_sheet(dataToExport)
         const wb = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(wb, ws, "Data Responden Lengkap")
+        XLSX.utils.book_append_sheet(wb, ws, "Data Responden Post Test")
 
         // Generate Excel file as a binary string
         const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" })
@@ -211,7 +154,7 @@ export default function RespondentsPage() {
         const url = window.URL.createObjectURL(dataBlob)
         const a = document.createElement("a")
         a.href = url
-        a.download = "data_responden_lengkap.xlsx"
+        a.download = "data_responden_posttest.xlsx"
         document.body.appendChild(a)
         a.click()
         document.body.removeChild(a)
@@ -259,8 +202,8 @@ export default function RespondentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Data Responden</h1>
-            <p className="text-gray-600">Kelola data responden penelitian</p>
+            <h1 className="text-2xl font-bold text-gray-900">Data Post Test</h1>
+            <p className="text-gray-600">Kelola data postest penelitian</p>
           </div>
           <div className="flex gap-2">
             <Button onClick={exportToExcel} variant="outline">
@@ -277,7 +220,7 @@ export default function RespondentsPage() {
             <CardTitle className="text-lg">Filter & Pencarian</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
@@ -287,18 +230,7 @@ export default function RespondentsPage() {
                   className="pl-10"
                 />
               </div>
-              <Select value={selectedUnit} onValueChange={setSelectedUnit}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih unit pelayanan" />
-                </SelectTrigger>
-                <SelectContent>
-                  {healthUnits.map((unit) => (
-                    <SelectItem key={unit} value={unit}>
-                      {unit}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+         
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">
@@ -326,7 +258,7 @@ export default function RespondentsPage() {
                     <TableRow>
                       <TableHead>ID</TableHead>
                       <TableHead>Nama</TableHead>
-                      <TableHead>Unit Pelayanan</TableHead>
+                      <TableHead>Nomor Telpon</TableHead>
                       <TableHead>Skor Depresi</TableHead>
                       <TableHead>Kategori Depresi</TableHead>
                       <TableHead>Skor Kecemasan</TableHead>
@@ -336,12 +268,12 @@ export default function RespondentsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredData.map((respondent) => (
-                      <TableRow key={respondent.id}>
-                        <TableCell className="font-mono text-sm">{respondent.respondent_number}</TableCell>
-                        <TableCell>{respondent.nama}</TableCell>
+                    {filteredData.map((respondent, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-mono text-sm">{index+1}</TableCell>
+                        <TableCell>{respondent.user_name}</TableCell>
                         <TableCell>
-                          <div className="text-sm">{respondent.nama_puskesmas}</div>
+                          <div className="text-sm">{respondent.user_phone}</div>
                         </TableCell>
                         <TableCell>
                           <div className="font-bold text-lg">{respondent.total_depression_score}</div>
@@ -364,7 +296,7 @@ export default function RespondentsPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-1">
-                            <Link href={`/admin/respondent/${respondent.id}`}>
+                            <Link href={`/admin/post-test-detail/${respondent.id}`}>
                               <Button size="sm" variant="outline">
                                 <Eye className="h-3 w-3 mr-1" /> Lihat Detail
                               </Button>

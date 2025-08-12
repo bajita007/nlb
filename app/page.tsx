@@ -157,7 +157,7 @@ export default function HomePage() {
           />
         </div>
         <div className="relative px-4 py-12">
-          <div className="max-w-md mx-auto text-center text-white">
+          <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto text-center text-white">
             <div className="flex justify-center mb-6">
               <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full">
                 <Heart className="h-16 w-16 text-white" />
@@ -171,7 +171,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-4 -mt-8 relative z-10">
+      <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto px-4 -mt-8 relative z-10">
         <Card className="mb-6 shadow-xl border-0 overflow-hidden">
           <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-600 text-white">
             <CardTitle className="flex items-center gap-2 text-lg">
