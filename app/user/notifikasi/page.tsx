@@ -354,7 +354,7 @@ export default function NotifikasiPage() {
               <Switch checked={pushEnabled} onCheckedChange={() => !pushEnabled && handleEnablePushNotifications()} />
             </div>
 
-            {!pushEnabled && (
+            {!isEnablingPush && (
               <div className="text-center">
                 <Button
                   onClick={handleEnablePushNotifications}
