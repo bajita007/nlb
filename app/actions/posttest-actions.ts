@@ -60,9 +60,10 @@ export async function submitPosttest(answers: number[], userData: any) {
 
 
     const posttestData = {
-      user_id:userData.id,
+      user_id:userData.id ,
       user_name: userData.full_name || "",
       user_phone: userData.phone_number || "",
+         alamat: userData.alamat || "",
       answers: answers,
       total_depression_score: totalScore,
       depression_category: depressionCategory,

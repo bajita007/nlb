@@ -16,6 +16,7 @@ import {
   MessageSquare,
   BookOpen,
   LogIn,
+  ClipboardList,
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -77,6 +78,7 @@ export default function HomePage() {
           title: "Error",
           description: "Gagal mencari data",
           variant: "destructive",
+          id: ""
         })
         setSearchResults([])
       }
@@ -371,10 +373,20 @@ export default function HomePage() {
                 <Heart className="h-4 w-4" />
                 Tujuan Penelitian
               </p>
-              <p className="text-blue-700 text-sm leading-relaxed">
-                Mengetahui gejala depresi dan kecemasan ibu hamil primigravida trimester 3 di Kabupaten Jeneponto,
-                Sulawesi Selatan Tahun 2025.
-              </p>
+              <div className="text-blue-700 text-sm leading-relaxed space-y-2">
+                <p>
+                  <strong>1.</strong> Untuk menilai tingkat depresi dan kecemasan pada ibu hamil primigravida trimester
+                  3 di Kabupaten Jeneponto.
+                </p>
+                <p>
+                  <strong>2.</strong> Untuk merancang aplikasi literasi digital untuk menurunkan tingkat depresi dan
+                  kecemasan pada ibu hamil primigravida trimester 3.
+                </p>
+                <p>
+                  <strong>3.</strong> Untuk menganalisis perbedaan perubahan tingkat depresi dan kecemasan ibu hamil
+                  primigravida trimester 3 sebelum dan sesudah mendapatkan pendampingan literasi digital.
+                </p>
+              </div>
             </div>
 
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-xl border-l-4 border-emerald-500">
@@ -470,6 +482,16 @@ export default function HomePage() {
               >
                 <Heart className="mr-2 h-5 w-5" />
                 Saya Bersedia Berpartisipasi
+              </Button>
+            </Link>
+             <Link href="/posttest-biodata">
+              <Button
+                variant="outline"
+                className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-medium py-4 text-lg bg-transparent"
+                size="lg"
+              >
+                <ClipboardList className="mr-2 h-5 w-5" />
+                Isi Posttest
               </Button>
             </Link>
           </CardContent>

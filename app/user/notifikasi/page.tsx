@@ -226,7 +226,7 @@ export default function NotifikasiPage() {
                 {
                   body: "Perangkat ini akan menerima notifikasi dari admin aplikasi",
                   icon: "/icon-192x192.png",
-                  badge: "/icon-192x192.png",
+                  badge: "/badge-48.png",
                   vibrate: [100, 50, 100],
                   tag: "test-notification",
                   requireInteraction: false,
@@ -236,6 +236,7 @@ export default function NotifikasiPage() {
               new Notification("Lentera Bunda - Notifikasi Aktif", {
                 body: "Perangkat ini akan menerima notifikasi dari admin aplikasi",
                 icon: "/icon-192x192.png",
+                  badge: "/badge-48.png",
               });
             }
           }

@@ -125,10 +125,12 @@ export default function RespondentsPage() {
 
       if (result.success && result.data && result.data.length > 0) {
         // Prepare data for export, ensuring all relevant fields are included
-        const dataToExport = result.data.map((row) => ({
-          "ID Responden": row.respondent_number,
+        const dataToExport = result.data.map((row, index) => ({
+          "NO" : index+1 || "",
+          "ID Responden": row.id,
           "Nama Lengkap": row.user_name,
           "Nomor Telepon": row.user_phone,
+             "Alamat" :  row.alamat || "",
           "Skor Depresi (EPDS)": row.total_depression_score, // Updated column name
           "Kategori Depresi": row.depression_category, // Updated column name
           "Skor Kecemasan (Q3-5)": row.total_anxiety_score, // New column
