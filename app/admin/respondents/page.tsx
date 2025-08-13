@@ -49,20 +49,7 @@ interface RespondentData {
   kuesioner?: number[]
 }
 
-const healthUnits = [
-  "Semua Unit",
-  "Puskesmas Bangkala",
-  "Puskesmas Batang",
-  "Puskesmas Binamu",
-  "Puskesmas Bontoramba",
-  "Puskesmas Kelara",
-  "Puskesmas Rumbia",
-  "Puskesmas Tamalatea",
-  "Puskesmas Turatea",
-  "RSUD Jeneponto",
-  "RS Bersalin Siti Khadijah",
-  "Klinik Pratama Lainnya",
-]
+
 
 export default function RespondentsPage() {
   const { toast } = useToast()
@@ -71,6 +58,10 @@ export default function RespondentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedUnit, setSelectedUnit] = useState("Semua Unit")
   const [isLoading, setIsLoading] = useState(true)
+
+const [healthUnits, setHealthUnits] = useState<string[]>(["Semua Unit"])
+
+
 
   useEffect(() => {
     loadData()
@@ -81,32 +72,43 @@ export default function RespondentsPage() {
   }, [data, searchTerm, selectedUnit])
 
   const loadData = async () => {
-    try {
-      setIsLoading(true)
-      const result = await getAllRespondents()
+  try {
+    setIsLoading(true);
 
-      if (result.success) {
-        setData(result.data || [])
-      } else {
-        toast({
-          title: "Error",
-          description: "Gagal memuat data responden",
-          variant: "destructive",
-          id: ""
-        })
+    const result = await getAllRespondents();
+
+    if (result.success) {
+      const respondents = result.data || [];
+      setData(respondents);
+
+      if (respondents.length > 0) {
+        // Ambil semua nama_puskesmas unik
+        const units = Array.from(
+          new Set(respondents.map(item => item.nama_puskesmas))
+        ).filter(Boolean);
+
+        setHealthUnits(["Semua Unit", ...units]);
       }
-    } catch (error) {
-      console.error("Error loading respondents:", error)
+    } else {
       toast({
         title: "Error",
-        description: "Terjadi kesalahan saat memuat data",
+        description: "Gagal memuat data responden",
         variant: "destructive",
         id: ""
-      })
-    } finally {
-      setIsLoading(false)
+      });
     }
+  } catch (error) {
+    console.error("Error loading respondents:", error);
+    toast({
+      title: "Error",
+      description: "Terjadi kesalahan saat memuat data",
+      variant: "destructive",
+      id: ""
+    });
+  } finally {
+    setIsLoading(false);
   }
+};
 
   const filterData = () => {
     let filtered = data
