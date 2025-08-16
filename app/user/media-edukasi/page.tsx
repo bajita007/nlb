@@ -17,19 +17,20 @@ export default function MediaEdukasiIntroPage() {
 
 
   const motivationalImages = [
-    {
-      url: "/pengantar/1.png",
-      title: "Motivasi Kesehatan Mental ",
-      description: "Kesehatan mental ibu adalah prioritas utama",
-    },
-    
-    // Generate additional 45 images with similar themes
-    ...Array.from({ length: 46 }, (_, i) => ({
-      url: `/pengantar/${i + 1}.png`,
-      title: `Motivasi Kesehatan Mental ${i + 1}`,
-      description: `Pesan inspiratif untuk ibu hamil ${i + 4}`,
+  {
+    url: "/pengantar/1.png",
+    title: "Motivasi Kesehatan Mental",
+    description: "Kesehatan mental ibu adalah prioritas utama",
+  },
+  // Generate dari 2 sampai 48, tapi skip 6
+  ...Array.from({ length: 47 }, (_, i) => i + 2) // [2..48]
+    .filter(num => num !== 6) // buang nomor 6
+    .map(num => ({
+      url: `/pengantar/${num}.png`,
+      title: `Motivasi Kesehatan Mental ${num}`,
+      description: `Pesan inspiratif untuk ibu hamil ${num}`,
     })),
-  ]
+]
   const openImageModal = (index: number) => {
     setSelectedImageIndex(index)
   }
