@@ -24,8 +24,8 @@ export default function MediaEdukasiIntroPage() {
     },
     
     // Generate additional 45 images with similar themes
-    ...Array.from({ length: 47 }, (_, i) => ({
-      url: `/pengantar/${i + 2}.png`,
+    ...Array.from({ length: 46 }, (_, i) => ({
+      url: `/pengantar/${i + 1}.png`,
       title: `Motivasi Kesehatan Mental ${i + 1}`,
       description: `Pesan inspiratif untuk ibu hamil ${i + 4}`,
     })),
