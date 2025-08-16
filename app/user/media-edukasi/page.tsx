@@ -23,7 +23,7 @@ export default function MediaEdukasiIntroPage() {
     description: "Pesan inspiratif untuk ibu hamil 1",
   },
   ...Array.from({ length: 47 }, (_, i) => i + 2) // bikin [2..48]
-    .filter(num => num !== 6) // buang file 6
+    .filter(num => num !== 5) // buang file 6
     .map((num, index) => ({
       url: `/pengantar/${num}.png`, // url asli (2..48 skip 6)
       title: `Motivasi Kesehatan Mental ${index + 2}`, // urutan rapi (2..47)
@@ -132,7 +132,7 @@ export default function MediaEdukasiIntroPage() {
                       <ZoomIn className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
                     <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
-                      {index + 1}/48
+                      {index + 1}/47
                     </div>
                   </div>
                   <div className="mt-2">
@@ -208,7 +208,7 @@ export default function MediaEdukasiIntroPage() {
               <div className="flex items-center gap-3">
                 <span className="text-lg font-semibold">{currentImage?.title}</span>
                 <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                  {selectedImageIndex !== null ? selectedImageIndex + 1 : 0} / 48
+                  {selectedImageIndex !== null ? selectedImageIndex + 1 : 0} / 47
                 </span>
               </div>
 
@@ -288,7 +288,7 @@ export default function MediaEdukasiIntroPage() {
           {/* Navigation Instructions */}
           <div className="px-4 pb-3 flex-shrink-0">
             <p className="text-center text-xs text-gray-500">
-              Gunakan tombol panah atau keyboard (←/→) untuk navigasi • ESC untuk menutup
+              Gunakan tombol panah atau keyboard (←/→) untuk navigasi 
             </p>
           </div>
         </DialogContent>
