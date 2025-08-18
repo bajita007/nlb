@@ -291,10 +291,7 @@ export default function AdminUsersPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        Dibuat: {new Date(user.created_at).toLocaleDateString("id-ID")}
-                      </span>
+                
                       {user.last_login && (
                         <span className="flex items-center gap-1">
                           <User className="h-3 w-3" />
