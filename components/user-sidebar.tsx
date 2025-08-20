@@ -25,7 +25,6 @@ export function UserSidebar({ currentUser }: UserSidebarProps) {
     toast({
       title: "Berhasil Logout",
       description: "Anda telah keluar dari sistem",
-      id: ""
     })
     router.push("/user/login")
   }
@@ -104,8 +103,8 @@ export function UserSidebar({ currentUser }: UserSidebarProps) {
         </div>
       )}
 
-      {/* Navigation */}
-      <nav className="flex-1 p-6">
+      {/* Navigation → scrollable */}
+      <nav className="flex-1 overflow-y-auto p-6">
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const isActive = pathname === item.href
@@ -130,7 +129,7 @@ export function UserSidebar({ currentUser }: UserSidebarProps) {
         </ul>
       </nav>
 
-      {/* Footer */}
+      {/* Footer (tetap fix di bawah) */}
       <div className="p-6 border-t border-gray-200">
         <div className="space-y-3">
           <Link href="/">
@@ -149,9 +148,9 @@ export function UserSidebar({ currentUser }: UserSidebarProps) {
             Keluar
           </Button>
         </div>
-        <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500">© 2025 Universitas Hasanuddin</p>
-          <p className="text-xs text-gray-500">Magister Kesehatan Masyarakat</p>
+        <div className="mt-4 text-center text-xs text-gray-500">
+          © 2025 Universitas Hasanuddin<br />
+          Magister Kesehatan Masyarakat
         </div>
       </div>
     </div>
