@@ -453,12 +453,22 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <div className="text-center pt-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-4">
-              <p className="text-xs text-gray-600 mb-1">Peneliti:</p>
-              <p className="font-semibold text-gray-800">Fitriani Sukardi, SKM</p>
-              <p className="text-sm text-blue-600 font-medium">📞 082284577558</p>
-              <p className="text-xs text-gray-500 mt-2">Makassar, 7 Mei 2025</p>
-            </div>
+           <div className="text-center pt-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-4 space-y-2">
+  {/* Peneliti */}
+  <div>
+    <p className="text-xs text-gray-600 mb-1">Peneliti:</p>
+    <p className="font-semibold text-gray-800">Fitriani Sukardi, SKM</p>
+    <p className="text-sm text-blue-600 font-medium">📞 082284577558</p>
+    <p className="text-xs text-gray-500 mt-2">Makassar, 7 Mei 2025</p>
+  </div>
+
+  {/* Dosen Pembimbing */}
+  <div className="mt-2">
+    <p className="text-xs text-gray-600 mb-1">Dosen Pembimbing:</p>
+    <p className="font-medium text-gray-800">Dr. Wahiduddin, SKM. M.Kes</p>
+    <p className="font-medium text-gray-800">Prof. Dr. Ida Leida Maria, SKM., M.KM., M.Sc.PH.</p>
+  </div>
+</div>
           </CardContent>
         </Card>
 
