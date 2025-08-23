@@ -1,5 +1,5 @@
 // Service Worker for Push Notifications
-const CACHE_NAME = "lentera-bunda-v1"
+const CACHE_NAME = "lentera-bunda-v2"
 const urlsToCache = ["/", "/manifest.json", "/icon-192x192.png", "/icon-512x512.png"]
 
 // Install event
